@@ -4,20 +4,30 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.appphim.helpers.HistoryManager;
 import com.example.appphim.model.Movie;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private YouTubePlayerView viewTrailer;
     private ImageView ivPosterLarge;
     private TextView tvTitleDetail;
     private TextView tvYearDetail;
@@ -47,11 +57,14 @@ public class DetailActivity extends AppCompatActivity {
         historyManager = new HistoryManager(this);
 
         // Ánh xạ view
-        ivPosterLarge = findViewById(R.id.ivPosterLarge);
+//        ivPosterLarge = findViewById(R.id.ivPosterLarge);
+        viewTrailer = findViewById(R.id.viewTrailer);
+        getLifecycle().addObserver(viewTrailer);
+
         tvTitleDetail = findViewById(R.id.tvTitleDetail);
         tvYearDetail = findViewById(R.id.tvYearDetail);
         tvOverview = findViewById(R.id.tvOverview);
-        btnWatchTrailer = findViewById(R.id.btnWatchTrailer);
+//        btnWatchTrailer = findViewById(R.id.btnWatchTrailer);
         btnWatchVideo = findViewById(R.id.btnWatchVideo);
         btnShare = findViewById(R.id.btnShare);
         ratingBar = findViewById(R.id.ratingBar);
@@ -59,28 +72,30 @@ public class DetailActivity extends AppCompatActivity {
         // Lấy dữ liệu phim từ Intent
         movie = (Movie) getIntent().getSerializableExtra("movie");
 
+
         if (movie != null) {
             // Lưu vào lịch sử
             historyManager.addToHistory(movie.getId());
 
             // Hiển thị thông tin phim
-            ivPosterLarge.setImageResource(movie.getPosterResId());
+//            ivPosterLarge.setImageResource(movie.getPosterResId());
             tvTitleDetail.setText(movie.getTitle());
             tvYearDetail.setText(movie.getYear());
             tvOverview.setText(movie.getOverview());
+            loadTrailer();
 
             // ===== NÚT XEM TRAILER (YouTube) =====
-            btnWatchTrailer.setOnClickListener(v -> {
-                String youtubeId = movie.getYoutubeTrailerId();
-                if (youtubeId != null && !youtubeId.isEmpty()) {
-                    // Mở YouTube bằng Intent
-                    Intent intent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.youtube.com/watch?v=" + youtubeId));
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(this, "Không có trailer cho phim này", Toast.LENGTH_SHORT).show();
-                }
-            });
+//            btnWatchTrailer.setOnClickListener(v -> {
+//                String youtubeId = movie.getYoutubeTrailerId();
+//                if (youtubeId != null && !youtubeId.isEmpty()) {
+//                    // Mở YouTube bằng Intent
+//                    Intent intent = new Intent(Intent.ACTION_VIEW,
+//                            Uri.parse("https://www.youtube.com/watch?v=" + youtubeId));
+//                    startActivity(intent);
+//                } else {
+//                    Toast.makeText(this, "Không có trailer cho phim này", Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
             // ===== NÚT XEM VIDEO FULL (MP4) =====
             btnWatchVideo.setOnClickListener(v -> {
@@ -131,5 +146,22 @@ public class DetailActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+    public void loadTrailer() {
+        String youtubeId = movie.getYoutubeTrailerId();
+        if (youtubeId == null || youtubeId.isEmpty()) return;
+        Log.d("Trailer id",youtubeId);
+        viewTrailer.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                youTubePlayer.loadVideo(youtubeId, 0f);
+            }
+
+            @Override
+            public void onError(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlayerError error) {
+                super.onError(youTubePlayer, error);
+                Log.e("YoutubeError", "Lỗi: " + error.name());
+            }
+        });
     }
 }
