@@ -23,14 +23,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Ảnh poster lớn -->
-<!--            <ImageView-->
-<!--                android:id="@+id/ivPosterLarge"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="350dp"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                android:src="@drawable/poster_placeholder" />-->
-
             <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,15 +83,15 @@
                     android:lineSpacingExtra="4dp" />
 
                 <!-- Nút xem TRAILER (YouTube) -->
-                <Button
-                    android:id="@+id/btnWatchTrailer"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="24dp"
-                    android:text="▶ XEM TRAILER"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:backgroundTint="#2196F3" />
+<!--                <Button-->
+<!--                    android:id="@+id/btnWatchTrailer"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="60dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:text="▶ XEM TRAILER"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:backgroundTint="#2196F3" />-->
 
                 <!-- Nút xem VIDEO FULL (MP4) -->
                 <Button

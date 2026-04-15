@@ -1,11 +1,15 @@
 package com.example.appphim;
 
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -40,6 +44,41 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         // Khởi tạo PlayerView
         playerView = findViewById(R.id.playerView);
+        playerView.setFullscreenButtonClickListener(new PlayerView.FullscreenButtonClickListener() {
+            @Override
+            public void onFullscreenButtonClick(boolean isFullScreen) {
+                if (isFullScreen) {
+                    // Chuyển sang chế độ màn hình ngang
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+                    // Ẩn thanh Action Bar nếu có
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().hide();
+                    }
+
+                    WindowInsetsControllerCompat windowInsetsController =
+                            ViewCompat.getWindowInsetsController(getWindow().getDecorView());
+                    if (windowInsetsController != null) {
+                        windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
+                    }
+                } else {
+                    // Trở về chế độ màn hình dọc
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                    // Hiện lại Action Bar
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().show();
+                    }
+
+                    // Hiện lại thanh hệ thống
+                    WindowInsetsControllerCompat windowInsetsController =
+                            ViewCompat.getWindowInsetsController(getWindow().getDecorView());
+                    if (windowInsetsController != null) {
+                        windowInsetsController.show(WindowInsetsCompat.Type.systemBars());
+                    }
+                }
+            }
+        });
 
         // Khởi tạo ExoPlayer
         initializePlayer();
